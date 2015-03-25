@@ -13,14 +13,29 @@ Node.js express session store provider for Windows Azure table storage.
 Typical usage for the most part:
 
     var express = require('express'),
-        AzureSessionStore = require('express-session-azure');
+	    session = require('express-session'),
+        AzureSessionStore = require('express-session-azure'),
 
-    var app = express.createServer();
+		sessionOpts = {
+			name : 'your-app-name',
+			secret : 'your-app-secret',
+			resave : false,
+			saveUninitialized : false,
+			rolling : false,
+			proxy : true,
+			store : new AzureSessionStore({
+				name: 'azure-storage-name',
+				accessKey: 'azure-storage-key'
+			}),
+			cookie : {
+				maxAge : 1800000,	// 30 min
+				secure : false,
+				httpOnly : true
+			}
+		};
 
-    app.configure(function(){
-        app.use(express.cookieDecoder());
-        app.use(express.session({ store: new AzureSessionStore({ name: "azure_storage_name", accessKey: "azure_storage_key" }) }));
-    });
+    var app = express();
+    app.use(session(sessionOpts));
 
 
 ## Performance
